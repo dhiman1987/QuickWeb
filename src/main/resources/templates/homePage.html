@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en" th:replace="fragments/header :: header"> 
+<title>Home</title>
+</head>
+<body>
+<div style="text-align:center;">
+<h1>QuickWeb Home</h1>
+<h5 th:text="'message: ' + ${message}" >Server message</h5>
+</div>
+<footer lang="en" th:replace="fragments/footer :: footer"> </footer>
+</body>
+</html>
