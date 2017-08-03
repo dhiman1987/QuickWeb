@@ -1,6 +1,8 @@
 package com.my.quickweb;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -15,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("rest/")
 public class MyRestEndpoint {
 	
-	@Autowired
-	private Map<String,MyDs> dataSources;
+	
 	
 	@Autowired
-	private MyDao myDao;
+	private MovieRepository movieRepository;
 	
 	@GetMapping("ping")
 	public String getServerTime() {
@@ -33,26 +34,11 @@ public class MyRestEndpoint {
 		return new Greeting("Hello world!!!", LocalTime.now());
 	}
 	
-	@GetMapping("set-env/{env}")
-	public String setEnv(@PathVariable("env") String env, HttpSession session) {
-		env = env.toUpperCase();
-		String sessionEnv = (String) session.getAttribute("env");
-		session.setAttribute("env",env );
-		
-		switch (env) {
-		case "DEV": this.myDao.setDataSource(this.dataSources.get("myDsDev"));
-		break;
-		case "PROD": this.myDao.setDataSource(this.dataSources.get("myDsProd"));
-		break;
-		default: this.myDao.setDataSource(this.dataSources.get("myDsProd"));
-		env ="PROD";
-		break;
-		}
-		
-		if(null!=sessionEnv) {
-			return "Environment chenged from "+sessionEnv+" to "+env.toUpperCase();
-		}
-		return "Environment set to "+env;
+	@GetMapping("/movies")
+	public List<Movie> getAllMovies(){
+		List<Movie> movies = new ArrayList<Movie>();
+		movieRepository.findAll().forEach(movies::add);
+		return movies;
 	}
 
 	static class Greeting{

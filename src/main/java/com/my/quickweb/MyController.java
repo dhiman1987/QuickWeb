@@ -3,7 +3,6 @@ package com.my.quickweb;
 import java.time.LocalTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,5 +24,7 @@ public class MyController {
 		model.addAttribute("message", "The time is "+LocalTime.now());
 		return "homePage.html";
 	}
+	
+
 	
 }
