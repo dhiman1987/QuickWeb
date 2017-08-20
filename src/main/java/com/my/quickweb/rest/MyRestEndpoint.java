@@ -1,4 +1,4 @@
-package com.my.quickweb;
+package com.my.quickweb.rest;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.my.quickweb.Movie;
+import com.my.quickweb.MovieRepository;
 
 @RestController
 @RequestMapping("rest/")

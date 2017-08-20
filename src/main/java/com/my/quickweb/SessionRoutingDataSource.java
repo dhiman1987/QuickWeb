@@ -3,47 +3,29 @@ package com.my.quickweb;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @RestController
 @RequestMapping("rest/session/")
 public class SessionRoutingDataSource extends AbstractRoutingDataSource {
 
-	private String env = "PROD";
 
-	@Autowired
-	private Map<String,MyDs> dummyDataSources;
-
-	@Autowired
-	private MyDao myDao;
 
 	@GetMapping("set-env/{env}")
 	public String setEnv(@PathVariable("env") String env, HttpSession session) {
 		env = env.toUpperCase();
 		String sessionEnv = (String) session.getAttribute("env");
 		session.setAttribute("env",env );
-
-		switch (env) {
-		case "DEV": this.myDao.setDataSource(this.dummyDataSources.get("myDsDev")); 
-		this.env="DEV";
-		break;
-		case "PROD": this.myDao.setDataSource(this.dummyDataSources.get("myDsProd"));
-		this.env="PROD";
-		break;
-		default: this.myDao.setDataSource(this.dummyDataSources.get("myDsProd"));
-		env ="PROD";
-		this.env="PROD";
-		break;
-		}
-
 		if(null!=sessionEnv) {
 			return "Environment chenged from "+sessionEnv+" to "+env.toUpperCase();
 		}
@@ -77,18 +59,16 @@ public class SessionRoutingDataSource extends AbstractRoutingDataSource {
 
 	@Override
 	protected Object determineCurrentLookupKey() {
-		/*HttpServletRequest request = ((ServletRequestAttributes)
-                RequestContextHolder.getRequestAttributes()).getRequest();
-        		if(null==request.getSession().getAttribute("env")){
-        			return "PROD";
-        		}
-        return request.getSession().getAttribute("env");*/
-		return this.env;
+		if(null==RequestContextHolder.getRequestAttributes()){
+			return "PROD";
+		}
+		HttpServletRequest request = ((ServletRequestAttributes)
+				RequestContextHolder.getRequestAttributes()).getRequest();
+
+		if(null==request.getSession().getAttribute("env")){
+			return "PROD";
+		}
+		return request.getSession().getAttribute("env");
 	}
 
-	/*    @Autowired
-    @Qualifier("dataSources")
-    public void setDataSources(Map<String, DataSource> dataSources) {
-        setTargetDataSources(dataSources);
-    }*/
 }
